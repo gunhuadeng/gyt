@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.sqlite*
+
+# Private customer templates and generated reports
+templates/formal-report-template.docx
+templates/template_baseline.json
+samples/formal-report-from-saved-template.docx
+samples/residential-workbook-filled.xlsx
+samples/sample-report.docx
+samples/sample-workbook.xlsx
+docs/verification/
+
+# Local runtime files
+*.log
+.DS_Store

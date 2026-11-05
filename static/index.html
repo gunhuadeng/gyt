@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="住宅房地产市场比较法测算、复核与原模板导出" />
+    <title>估研台 · 住宅市场比较法测算</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230f766e'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='34' font-family='serif' fill='white'%3E估%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="估研台首页">
+        <span class="brand-mark">估</span>
+        <span>
+          <strong>估研台</strong>
+          <small>住宅市场比较法 · 税务估价工作台</small>
+        </span>
+      </a>
+      <div class="top-actions">
+        <label class="button button-quiet file-button" title="选择未填写或空白的住宅测算表">
+          <span id="templateButtonLabel">选择 Excel 原表</span>
+          <input id="xlsxTemplateFile" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+        </label>
+        <label class="button button-quiet file-button">
+          导入项目
+          <input id="importFile" type="file" accept=".json,application/json" />
+        </label>
+        <button id="saveProject" data-testid="save-project" class="button button-quiet" type="button">保存项目</button>
+        <button id="loadExample" data-testid="load-example" class="button button-dark" type="button">恢复样例</button>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="intro">
+        <div>
+          <p class="eyebrow">RESIDENTIAL VALUATION WORKBENCH</p>
+          <h1>每一项修正，<span>都能回到公式。</span></h1>
+          <p class="intro-copy">
+            按住宅测算表规则完成交易情况、市场状况、实体与区域因素修正，自动核验比准价格和报告口径，并回填原 Excel 模板。
+          </p>
+        </div>
+        <div class="status-chip">
+          <span class="pulse"></span>
+          本地计算 · 数据不上传
+        </div>
+      </section>
+
+      <div class="notice">
+        <strong>复核口径</strong>
+        <span>
+          证载楼层用于产权展示，层次修正按地上总层数计算。本估价对象显示为18/19，地上18层中的第18层为顶层，层次系数99.4。
+        </span>
+      </div>
+
+      <div class="workspace">
+        <div class="form-column">
+          <section class="card">
+            <div class="section-heading">
+              <div>
+                <span class="step">01</span>
+                <h2>项目与估价对象</h2>
+              </div>
+              <span class="section-hint">报告标题用于导出文件命名</span>
+            </div>
+
+            <div class="field-grid project-grid">
+              <label class="field field-wide">
+                <span>报告标题</span>
+                <input data-subject="report_title" type="text" />
+              </label>
+              <label class="field">
+                <span>报告编号</span>
+                <input data-subject="report_number" type="text" />
+              </label>
+              <label class="field">
+                <span>价值时点</span>
+                <input data-subject="valuation_date" type="date" />
+              </label>
+              <label class="field field-wide">
+                <span>坐落</span>
+                <input data-subject="address" type="text" />
+              </label>
+              <label class="field">
+                <span>建筑面积（㎡）</span>
+                <input data-subject="area" type="number" min="0" step="0.01" />
+              </label>
+              <label class="field">
+                <span>产权证楼层显示</span>
+                <input data-subject="certificate_floor_display" type="text" placeholder="如 18/19" />
+              </label>
+              <label class="field">
+                <span>地下层数</span>
+                <input data-subject="below_ground_floors" type="number" min="0" step="1" />
+              </label>
+              <label class="field">
+                <span>地上总层数</span>
+                <input data-subject="above_ground_total_floors" type="number" min="1" step="1" />
+              </label>
+              <label class="field">
+                <span>所在楼层（地上）</span>
+                <input data-subject="floor" type="number" min="1" step="1" />
+              </label>
+              <label class="field">
+                <span>建成年代</span>
+                <input data-subject="build_year" type="number" min="1900" max="2100" step="1" />
+              </label>
+              <label class="field">
+                <span>建筑结构</span>
+                <select data-subject="structure"></select>
+              </label>
+              <label class="field">
+                <span>建筑类型</span>
+                <select data-subject="building_type">
+                  <option value="multi_story">普通多层</option>
+                  <option value="elevator_multi_story">电梯多层</option>
+                  <option value="high_rise">小高层 / 高层</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>朝向</span>
+                <select data-subject="orientation"></select>
+              </label>
+              <label class="field">
+                <span>东西至</span>
+                <select data-subject="east_west"></select>
+              </label>
+              <label class="field">
+                <span>房屋性质</span>
+                <input data-subject="property_nature" type="text" />
+              </label>
+              <label class="field">
+                <span>建筑面积修正系数</span>
+                <input data-subject="area_factor_pct" type="number" step="0.1" />
+              </label>
+              <label class="field">
+                <span>装修重置单价（元/㎡）</span>
+                <input data-subject="decoration_unit_price" type="number" min="0" step="10" />
+              </label>
+              <label class="field">
+                <span>装修成新率</span>
+                <input data-subject="decoration_newness" type="number" min="0" max="1" step="0.01" />
+              </label>
+              <label class="field">
+                <span>附属物情况</span>
+                <input data-subject="appurtenance_description" type="text" placeholder="无则填写 /" />
+              </label>
+              <label class="field">
+                <span>附属物扣减（元/㎡）</span>
+                <input data-subject="appurtenance_unit_price" type="number" min="0" step="1" />
+              </label>
+            </div>
+            <details class="supplement-panel">
+              <summary>展开权益状况与区位状况资料</summary>
+              <div class="field-grid project-grid supplement-grid">
+                <label class="field">
+                  <span>产权人</span>
+                  <input data-subject="owner" type="text" />
+                </label>
+                <label class="field">
+                  <span>不动产权证号</span>
+                  <input data-subject="certificate_no" type="text" />
+                </label>
+                <label class="field">
+                  <span>共有情况</span>
+                  <input data-subject="co_ownership" type="text" />
+                </label>
+                <label class="field">
+                  <span>不动产单元号</span>
+                  <input data-subject="real_estate_unit_no" type="text" />
+                </label>
+                <label class="field">
+                  <span>宗地面积（㎡）</span>
+                  <input data-subject="land_area" type="number" min="0" step="0.01" />
+                </label>
+                <label class="field">
+                  <span>土地用途</span>
+                  <input data-subject="land_use" type="text" />
+                </label>
+                <label class="field">
+                  <span>权利类型</span>
+                  <input data-subject="rights_type" type="text" />
+                </label>
+                <label class="field">
+                  <span>权利性质</span>
+                  <input data-subject="rights_nature" type="text" />
+                </label>
+                <label class="field field-span-2">
+                  <span>使用期限</span>
+                  <input data-subject="rights_term" type="text" />
+                </label>
+                <label class="field">
+                  <span>丘权号</span>
+                  <input data-subject="parcel_no" type="text" />
+                </label>
+                <label class="field">
+                  <span>实际用途</span>
+                  <input data-subject="use_type" type="text" />
+                </label>
+                <label class="field field-wide">
+                  <span>四至</span>
+                  <textarea data-subject="location_boundaries" rows="2"></textarea>
+                </label>
+                <label class="field field-wide">
+                  <span>区位状况描述</span>
+                  <textarea data-subject="location_description" rows="4"></textarea>
+                </label>
+                <label class="field field-wide">
+                  <span>区位状况分析</span>
+                  <textarea data-subject="location_analysis" rows="3"></textarea>
+                </label>
+              </div>
+            </details>
+            <div class="floor-summary">
+              <span>楼层修正口径</span>
+              <strong id="floorCorrectionSummary">18/18（顶层）</strong>
+              <small>证载层数不直接参与住宅层次修正</small>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="section-heading">
+              <div>
+                <span class="step">02</span>
+                <h2>三个可比实例</h2>
+              </div>
+              <span class="section-hint">P1、P2 均允许独立修正</span>
+            </div>
+            <div id="comparables" class="comparables"></div>
+          </section>
+
+          <section class="card">
+            <div class="section-heading">
+              <div>
+                <span class="step">03</span>
+                <h2>区域因素等级</h2>
+              </div>
+              <span class="section-hint">一等至五等，自动换算标准得分</span>
+            </div>
+            <div class="regional-table-wrap">
+              <table class="regional-table">
+                <thead>
+                  <tr>
+                    <th>区域因素</th>
+                    <th>估价对象</th>
+                    <th>实例A</th>
+                    <th>实例B</th>
+                    <th>实例C</th>
+                  </tr>
+                </thead>
+                <tbody id="regionalFactors"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <aside class="result-column">
+          <section class="card result-card">
+            <div class="result-topline">
+              <span class="result-label">市场比较法测算结果</span>
+              <span id="calcState" class="calc-state">正在计算</span>
+            </div>
+            <div id="resultError" class="result-error hidden"></div>
+            <div id="resultContent">
+              <p class="value-caption">建议评估总价</p>
+              <div class="hero-value">
+                <span>¥</span>
+                <strong data-testid="estimated-total" id="estimatedTotal">0</strong>
+              </div>
+              <p id="totalUppercase" class="uppercase-value"></p>
+
+              <div class="metric-grid">
+                <div>
+                  <span>评估单价</span>
+                  <strong data-testid="estimated-unit-price" id="estimatedUnitPrice">—</strong>
+                  <small>元/㎡</small>
+                </div>
+                <div>
+                  <span>价格离散度</span>
+                  <strong id="spreadPct">—</strong>
+                  <small>上限提示 10%</small>
+                </div>
+                <div>
+                  <span>区域得分</span>
+                  <strong id="regionalScore">—</strong>
+                  <small>估价对象</small>
+                </div>
+              </div>
+
+              <div id="qualityBlock" class="quality-block"></div>
+              <ul id="warnings" class="warning-list"></ul>
+
+              <div class="export-block">
+                <div class="export-heading">
+                  <strong>生成交付文件</strong>
+                  <span id="templateStatus">尚未选择 Excel 原表</span>
+                </div>
+                <div class="export-actions">
+                  <button id="exportWord" data-testid="export-word" class="export-button word" type="button">
+                    <span class="file-icon">W</span>
+                    <span><strong>Word 正式报告</strong><small>.docx</small></span>
+                  </button>
+                  <button id="exportExcel" data-testid="export-excel" class="export-button excel" type="button" disabled>
+                    <span class="file-icon">X</span>
+                    <span><strong>填写 Excel 原表</strong><small>.xlsx</small></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card review-card">
+            <div class="section-heading compact">
+              <div>
+                <span class="step">04</span>
+                <h2>修正轨迹</h2>
+              </div>
+            </div>
+            <div id="comparisonTable" class="comparison-table"></div>
+          </section>
+        </aside>
+      </div>
+
+      <footer>
+        <span>估研台 · 住宅比较法 v1.0</span>
+        <span>测算草稿须由具备资质的房地产估价专业人员复核。</span>
+      </footer>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
